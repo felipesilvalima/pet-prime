@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+
+  db-pet:
+    image: mysql:8.0
+    container_name: db-pet
+    environment:
+      MYSQL_ROOT_PASSWORD: "26102002"
+      MYSQL_DATABASE: "pet-prime"
+    ports:
+      - "3306:3306"
+    networks:
+      - "rede-pet"
+    volumes:
+      - "db-pet:/var/lib/mysql"
+    restart: "always"
+
+  app-pet:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pet-prime:1.0
+    container_name: pet-prime
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db-pet
+    volumes:
+      - .:/app
+    networks:
+      - "rede-pet"
+    restart: "always"
+  
+
+volumes:
+  db-pet: {}
+
+networks:
+  rede-pet:
+    driver: "bridge"
